@@ -1,0 +1,31 @@
+{
+  "name": "dbf",
+  "version": "0.0.0",
+  "description": "generate dbf files",
+  "main": "index.js",
+  "dependencies": {
+    "jdataview": "~2.4.4"
+  },
+  "devDependencies": {
+    "expect.js": "~0.2.0",
+    "mocha": "~1.13.0"
+  },
+  "scripts": {
+    "test": "mocha -R spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/tmcw/dbf"
+  },
+  "keywords": [
+    "dbf",
+    "file",
+    "database",
+    "shapefile"
+  ],
+  "author": "Tom MacWright",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/tmcw/dbf/issues"
+  }
+}
