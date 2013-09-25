@@ -10,7 +10,10 @@ module.exports = function record(attributes, rows, recordLength) {
     rows.forEach(function(row) {
         view.setUint8(offset, 32);
         offset += 1;
+        offset = writeRow(row, offset);
+    });
 
+    function writeRow(row, offset) {
         attributes.forEach(writeAttribute);
 
         function writeAttribute(attribute) {
@@ -43,7 +46,9 @@ module.exports = function record(attributes, rows, recordLength) {
                         lib.rpad(val.toString(), fieldLength, ' '), offset);
             }
         }
-    });
+
+        return offset;
+    }
 
     view.setUint8(dataLength - 1, 26);
 

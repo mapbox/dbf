@@ -7,6 +7,19 @@ based on https://code.google.com/p/js2shapefile/ but aiming for a full rewrite.
     npm install dbf
     npm test
 
+### example
+
+```js
+var dbf = require('dbf');
+
+dbf.writer([{
+    type: 'C',
+    name: 'foo'
+}], [{
+    foo: 'bar'
+}]);
+```
+
 ### specs
 
 * http://www.clicketyclick.dk/databases/xbase/format/dbf.html#DBF_STRUCT
