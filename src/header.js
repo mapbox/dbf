@@ -1,36 +1,33 @@
+var fieldTypes = {
+    // string
+    C: function(attr) { return attr.length || 254; },
+    // boolean
+    L: functor(1),
+    // date
+    D: functor(8),
+    // number
+    N: function(attr) { return attr.length || 18; },
+    // number
+    M: function(attr) { return attr.length || 18; },
+    // number, float
+    F: function(attr) { return attr.length || 18; },
+    // number
+    B: function(attr) { return attr.length || 18; }
+};
+
 module.exports = function header(attributes, n) {
 
-    var fieldDescLength = 32 * attributes.length + 1,
+    var fieldDescLength = (32 * attributes.length) + 1,
         dbfFieldDescBuf = new ArrayBuffer(fieldDescLength),
         dbfFieldDescView = new DataView(dbfFieldDescBuf),
-        numBytesPerRecord = 1;
+        // deleted flag
+        bytesPerRecord = 1;
 
     attributes.forEach(function(attr, i) {
-        var name = attr.name.slice(0, 10),
-            datatype = attr.type || 'C',
-            fieldLength;
+        var datatype = attr.type || 'C',
+            fieldLength = fieldTypes[datatype](attr);
 
-        // write the name into bytes 0-9 of the field description
-        for (var x = 0; x < name.length; x++) {
-            dbfFieldDescView.setInt8(i * 32 + x, name.charCodeAt(x));
-        }
-
-        switch (datatype) {
-            case 'L':
-                fieldLength = 1;
-                break;
-            case 'D':
-                fieldLength = 8;
-                break;
-            case 'N':
-                fieldLength = attr.length && attr.length < 19 ?
-                    attr.length : 18;
-                break;
-            case 'C':
-                fieldLength = attr.length && attr.length < 254 ?
-                    attr.length : 254;
-                break;
-        }
+        writeName(dbfFieldDescView, attr.name, i);
 
         dbfFieldDescView.setInt8(i * 32 + 11, datatype.charCodeAt(0));
         dbfFieldDescView.setInt8(i * 32 + 16, fieldLength);
@@ -39,11 +36,8 @@ module.exports = function header(attributes, n) {
             dbfFieldDescView.setInt8(i * 32 + 17, attr.scale || 0);
         }
 
-        // modify what's recorded so the attribute map doesn't have more than
-        // 18 chars even if there are more
-        // than 18 present
         attr.length = fieldLength;
-        numBytesPerRecord += fieldLength;
+        bytesPerRecord += fieldLength;
     });
 
     // mark end of header
@@ -54,25 +48,35 @@ module.exports = function header(attributes, n) {
         dbfHeaderView = new DataView(dbfHeaderBuf);
 
     dbfHeaderView.setUint8(0, 3);
-
-    var now = new Date();
-    dbfHeaderView.setUint8(1, now.getFullYear() - 1900);
-    dbfHeaderView.setUint8(2, now.getMonth());
-    dbfHeaderView.setUint8(3, now.getDate());
-
+    writeDate(dbfHeaderView, new Date());
     dbfHeaderView.setUint32(4, n, true);
 
-    var totalHeaderLength = fieldDescLength + 31 + 1;
-    dbfHeaderView.setUint16(8, totalHeaderLength, true);
-    dbfHeaderView.setUint16(10, numBytesPerRecord, true);
+    var headerLength = fieldDescLength + 31 + 1;
+    dbfHeaderView.setUint16(8, headerLength, true);
+    dbfHeaderView.setUint16(10, bytesPerRecord, true);
 
     // var dbfHeaderBlob = new BlobBuilder();
     // dbfHeaderBlob.append(dbfHeaderView.getBuffer());
     // dbfHeaderBlob.append(dbfFieldDescView.getBuffer());
 
     return {
-        recordLength: numBytesPerRecord,
+        recordLength: bytesPerRecord,
         header: dbfHeaderBuf,
         field: dbfFieldDescBuf
     };
 };
+
+function writeDate(view, now) {
+    view.setUint8(1, now.getFullYear() - 1900);
+    view.setUint8(2, now.getMonth());
+    view.setUint8(3, now.getDate());
+}
+
+function writeName(view, name, i) {
+    name.split('').slice(0, 8).forEach(writeChar);
+    function writeChar(c, x) {
+        view.setInt8(i * 32 + x, c.charCodeAt(0));
+    }
+}
+
+function functor(_) { return function() { return _; }; }

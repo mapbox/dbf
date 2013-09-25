@@ -6,9 +6,13 @@ module.exports = function record(attributeMap, rows, dbfRecordLength) {
         currentOffset = 0;
 
     rows.forEach(function(rowData) {
-        var recordStartOffset = rownum * (dbfRecordLength); // recordLength includes the byte for deletion flag
-        dbfDataView.setUint8(currentOffset, 32); // Deletion flag: not deleted. 20h = 32, space
+
+        var recordStartOffset = rownum * (dbfRecordLength);
+
+        // Deletion flag: not deleted. 20h = 32, space
+        dbfDataView.setUint8(currentOffset, 32);
         currentOffset += 1;
+
         for (var attribNum = 0; attribNum < attributeMap.length; attribNum++) {
 
             var attribInfo = attributeMap[attribNum],
@@ -35,10 +39,7 @@ module.exports = function record(attributeMap, rows, dbfRecordLength) {
                         // if the length isn't what it should be then ignore and write a blank string
                         numAsString = "".lpad(" ", 8);
                     }
-                    for (writeByte = 0; writeByte < fieldLength; writeByte++) {
-                        dbfDataView.setUint8(currentOffset, numAsString.charCodeAt(writeByte));
-                        currentOffset += 1;
-                    }
+                    currentOffset = writeField(fieldLength, numAsString, currentOffset);
                     break;
 
                 case 'N':
@@ -52,14 +53,10 @@ module.exports = function record(attributeMap, rows, dbfRecordLength) {
                     if (numAsString.length < fieldLength) {
                         // if the length is too short then pad to the left
                         numAsString = numAsString.lpad(" ", fieldLength);
-                    }
-                    else if (numAsString.length > fieldLength){
+                    } else if (numAsString.length > fieldLength){
                         numAsString = numAsString.substr(0,18);
                     }
-                    for (writeByte = 0; writeByte < fieldLength; writeByte++) {
-                        dbfDataView.setUint8(currentOffset, numAsString.charCodeAt(writeByte));
-                        currentOffset += 1;
-                    }
+                    currentOffset = writeField(fieldLength, numAsString, currentOffset);
                     break;
 
                 case 'C':
@@ -72,11 +69,7 @@ module.exports = function record(attributeMap, rows, dbfRecordLength) {
                     if (attValue.length < fieldLength) {
                         attValue = attValue.rpad(" ", fieldLength);
                     }
-                    // doesn't matter if it's too long as we will only write fieldLength bytes
-                    for (writeByte = 0; writeByte < fieldLength; writeByte++) {
-                        dbfDataView.setUint8(currentOffset, attValue.charCodeAt(writeByte));
-                        currentOffset += 1;
-                    }
+                    currentOffset = writeField(fieldLength, numAsString, currentOffset);
             }
         }
     });
@@ -85,3 +78,11 @@ module.exports = function record(attributeMap, rows, dbfRecordLength) {
 
     return dbfDataBuf;
 };
+
+function writeField(fieldLength, numAsString, currentOffset) {
+    for (var i = 0; i < fieldLength; i++) {
+        dbfDataView.setUint8(currentOffset, numAsString.charCodeAt(i));
+        currentOffset++;
+    }
+    return currentOffset;
+}
