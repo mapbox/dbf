@@ -18,22 +18,23 @@ var fieldTypes = {
 module.exports = function header(attributes, n) {
 
     var fieldDescLength = (32 * attributes.length) + 1,
-        dbfFieldDescBuf = new ArrayBuffer(fieldDescLength),
-        dbfFieldDescView = new DataView(dbfFieldDescBuf),
+        buffer = new ArrayBuffer(fieldDescLength),
+        view = new DataView(buffer),
+        headerBuffer = new ArrayBuffer(32),
+        headerView = new DataView(headerBuffer),
         // deleted flag
         bytesPerRecord = 1;
 
     attributes.forEach(function(attr, i) {
-        var datatype = attr.type || 'C',
-            fieldLength = fieldTypes[datatype](attr);
+        var fieldLength = fieldTypes[attr.type](attr);
 
-        writeName(dbfFieldDescView, attr.name, i);
+        writeName(view, attr.name, i);
 
-        dbfFieldDescView.setInt8(i * 32 + 11, datatype.charCodeAt(0));
-        dbfFieldDescView.setInt8(i * 32 + 16, fieldLength);
+        view.setInt8(i * 32 + 11, attr.type.charCodeAt(0));
+        view.setInt8(i * 32 + 16, fieldLength);
 
-        if (datatype == 'N') {
-            dbfFieldDescView.setInt8(i * 32 + 17, attr.scale || 0);
+        if (attr.type == 'N') {
+            view.setInt8(i * 32 + 17, attr.scale || 0);
         }
 
         attr.length = fieldLength;
@@ -41,28 +42,24 @@ module.exports = function header(attributes, n) {
     });
 
     // mark end of header
-    dbfFieldDescView.setInt8(fieldDescLength - 1, 13);
+    view.setInt8(fieldDescLength - 1, 13);
 
-    // field map section is complete, now do the main header
-    var dbfHeaderBuf = new ArrayBuffer(32),
-        dbfHeaderView = new DataView(dbfHeaderBuf);
-
-    dbfHeaderView.setUint8(0, 3);
-    writeDate(dbfHeaderView, new Date());
-    dbfHeaderView.setUint32(4, n, true);
+    headerView.setUint8(0, 3);
+    writeDate(headerView, new Date());
+    headerView.setUint32(4, n, true);
 
     var headerLength = fieldDescLength + 31 + 1;
-    dbfHeaderView.setUint16(8, headerLength, true);
-    dbfHeaderView.setUint16(10, bytesPerRecord, true);
+    headerView.setUint16(8, headerLength, true);
+    headerView.setUint16(10, bytesPerRecord, true);
 
     // var dbfHeaderBlob = new BlobBuilder();
     // dbfHeaderBlob.append(dbfHeaderView.getBuffer());
-    // dbfHeaderBlob.append(dbfFieldDescView.getBuffer());
+    // dbfHeaderBlob.append(view.getBuffer());
 
     return {
         recordLength: bytesPerRecord,
-        header: dbfHeaderBuf,
-        field: dbfFieldDescBuf
+        header: headerBuffer,
+        field: buffer
     };
 };
 
