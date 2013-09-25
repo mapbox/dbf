@@ -1,6 +1,6 @@
-module.exports = function record(attributeMap, rows, dbfRecordLength){
+module.exports = function record(attributeMap, rows, dbfRecordLength) {
 
-    var dataLength = (dbfRecordLength) * graphics.length + 1,
+    var dataLength = (dbfRecordLength) * rows.length + 1,
         dbfDataBuf = new ArrayBuffer(dataLength),
         dbfDataView = new DataView(dbfDataBuf),
         currentOffset = 0;
@@ -27,6 +27,7 @@ module.exports = function record(attributeMap, rows, dbfRecordLength){
                     else dbfDataView.setUint8(currentOffset, 70);
                     currentOffset += 1;
                     break;
+
                 case 'D':
                     fieldLength = 8;
                     numAsString = attValue.toString();
@@ -39,6 +40,7 @@ module.exports = function record(attributeMap, rows, dbfRecordLength){
                         currentOffset += 1;
                     }
                     break;
+
                 case 'N':
                     // maximum length is 18. Numbers are stored as ascii text so convert to a string.
                     // fieldLength = attribinfo.length && attribinfo.length<19 ? attribinfo.length : 18;
@@ -59,6 +61,7 @@ module.exports = function record(attributeMap, rows, dbfRecordLength){
                         currentOffset += 1;
                     }
                     break;
+
                 case 'C':
                 case '':
                     if (fieldLength === 0) return;
@@ -79,8 +82,6 @@ module.exports = function record(attributeMap, rows, dbfRecordLength){
     });
 
     dbfDataView.setUint8(dataLength - 1, 26);
-    var dbfDataBlobObject = new BlobBuilder();
-    dbfDataBlobObject.append(dbfDataView.getBuffer());
 
-    return dbfDataBlobObject;
+    return dbfDataBuf;
 };
