@@ -2,28 +2,30 @@ var lib = require('./lib');
 
 module.exports = function record(attributes, rows, recordLength) {
 
-    var dataLength = recordLength * rows.length + 1,
+    var dataLength = (recordLength) * rows.length + 1,
         buffer = new ArrayBuffer(dataLength),
         view = new DataView(buffer),
         offset = 0;
 
-    rows.forEach(writeRow);
-
-    function writeRow(row) {
-
+    rows.forEach(function(row) {
         view.setUint8(offset, 32);
-        offset++;
+        offset += 1;
+        offset = writeRow(row, offset);
+    });
+
+    function writeRow(row, offset) {
         attributes.forEach(writeAttribute);
 
         function writeAttribute(attribute) {
             var dataType = attribute.type || 'C',
                 fieldLength = attribute.length || 0,
-                val = row[attribute.name] || rownum.toString();
+                val = row[attribute.name] || rownum.toString(),
+                str;
 
             switch (dataType) {
                 case 'L':
                     view.setUint8(offset, val ? 84 : 70);
-                    offset++;
+                    offset += 1;
                     break;
 
                 case 'D':
@@ -44,9 +46,11 @@ module.exports = function record(attributes, rows, recordLength) {
                         lib.rpad(val.toString(), fieldLength, ' '), offset);
             }
         }
+
+        return offset;
     }
 
     view.setUint8(dataLength - 1, 26);
 
-    return view;
+    return buffer;
 };
