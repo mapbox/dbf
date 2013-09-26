@@ -1,10 +1,9 @@
 {
   "name": "dbf",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "generate dbf files",
   "main": "index.js",
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "expect.js": "~0.2.0",
     "mocha": "~1.13.0"
