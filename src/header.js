@@ -25,23 +25,26 @@ module.exports = function header(attributes, n) {
         // deleted flag
         bytesPerRecord = 1;
 
-    attributes.forEach(function(attr, i) {
+    attributes.forEach(writeAttribute);
+
+    function writeAttribute(attr, i) {
         var fieldLength = fieldTypes[attr.type](attr);
 
         writeName(view, attr.name, i);
 
-        view.setInt8(i * 32 + 11, attr.type.charCodeAt(0));
-        view.setInt8(i * 32 + 16, fieldLength);
+        var i32 = i * 32;
+        view.setInt8(i32 + 11, attr.type.charCodeAt(0));
+        view.setInt8(i32 + 16, fieldLength);
 
         if (attr.type == 'N') {
-            view.setInt8(i * 32 + 17, attr.scale || 0);
+            view.setInt8(i32 + 17, attr.scale || 0);
         }
 
         attr.length = fieldLength;
         bytesPerRecord += fieldLength;
-    });
+    }
 
-    // mark end of header
+    // end of header
     view.setInt8(fieldDescLength - 1, 13);
 
     headerView.setUint8(0, 3);
@@ -52,14 +55,10 @@ module.exports = function header(attributes, n) {
     headerView.setUint16(8, headerLength, true);
     headerView.setUint16(10, bytesPerRecord, true);
 
-    // var dbfHeaderBlob = new BlobBuilder();
-    // dbfHeaderBlob.append(dbfHeaderView.getBuffer());
-    // dbfHeaderBlob.append(view.getBuffer());
-
     return {
         recordLength: bytesPerRecord,
-        header: headerBuffer,
-        field: buffer
+        header: headerView,
+        field: view
     };
 };
 

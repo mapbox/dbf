@@ -4,7 +4,6 @@
   "description": "generate dbf files",
   "main": "index.js",
   "dependencies": {
-    "jdataview": "~2.4.4"
   },
   "devDependencies": {
     "expect.js": "~0.2.0",
