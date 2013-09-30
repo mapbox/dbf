@@ -5,19 +5,28 @@ var fs = require('fs'),
 module.exports = function write(fields, data) {
     var headData = header(fields);
     var rowData = record(fields, data, headData.recordLength);
-    var out = fs.createWriteStream('foo.dbf');
-    fs.writeFileSync('foo.dbf', Buffer.concat([
-        toBuffer(headData.header),
-        toBuffer(headData.field),
-        toBuffer(rowData)
-    ]));
+    return combined([
+        headData.header,
+        headData.field,
+        rowData
+    ]);
 };
 
-function toBuffer(ab) {
-    var buffer = new Buffer(ab.byteLength);
-    var view = new Uint8Array(ab);
-    for (var i = 0; i < buffer.length; ++i) {
-        buffer[i] = view[i];
-    }
+function combined(l) {
+    var totalLength = l.reduce(function(mem, b) {
+        return mem += b.byteLength;
+    }, 0),
+        buffer = new Buffer(totalLength),
+        view = new Uint8Array(totalLength);
+
+    var i = 0;
+
+    l.forEach(function(_) {
+        for (var j = 0; j < _.length; j++) {
+            buffer[i] = _[i];
+            i++;
+        }
+    });
+
     return buffer;
 }

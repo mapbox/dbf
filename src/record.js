@@ -7,19 +7,19 @@ module.exports = function record(attributes, rows, recordLength) {
         view = new DataView(buffer),
         offset = 0;
 
-    rows.forEach(function(row) {
+    rows.forEach(function(row, num) {
         view.setUint8(offset, 32);
         offset += 1;
-        offset = writeRow(row, offset);
+        offset = writeRow(row, offset, num);
     });
 
-    function writeRow(row, offset) {
+    function writeRow(row, offset, num) {
         attributes.forEach(writeAttribute);
 
         function writeAttribute(attribute) {
             var dataType = attribute.type || 'C',
                 fieldLength = attribute.length || 0,
-                val = row[attribute.name] || rownum.toString(),
+                val = row[attribute.name] || num.toString(),
                 str;
 
             switch (dataType) {
