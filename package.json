@@ -1,6 +1,6 @@
 {
   "name": "dbf",
-  "version": "0.0.0",
+  "version": "0.0.2",
   "description": "generate dbf files",
   "main": "index.js",
   "dependencies": {
@@ -11,7 +11,8 @@
     "mocha": "~1.13.0"
   },
   "scripts": {
-    "test": "mocha -R spec"
+    "test": "mocha -R spec",
+    "make": "browserify -s dbf ./ > dbf.js"
   },
   "repository": {
     "type": "git",
