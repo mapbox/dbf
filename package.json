@@ -11,7 +11,8 @@
     "mocha": "~1.13.0"
   },
   "scripts": {
-    "test": "mocha -R spec"
+    "test": "mocha -R spec",
+    "make": "browserify -s dbf ./ > dbf.js"
   },
   "repository": {
     "type": "git",

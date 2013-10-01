@@ -6,9 +6,9 @@ module.exports.rpad = function rpad(str, len, char) {
     while (str.length < len) { str = str + char; } return str;
 };
 
-module.exports.writeField = function writeField(view, fieldLength, numAsString, offset) {
+module.exports.writeField = function writeField(view, fieldLength, str, offset) {
     for (var i = 0; i < fieldLength; i++) {
-        view.setUint8(offset, numAsString.charCodeAt(i)); offset++;
+        view.setUint8(offset, str.charCodeAt(i)); offset++;
     }
     return offset;
 };

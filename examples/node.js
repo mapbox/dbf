@@ -1,4 +1,4 @@
-var dbf = require('./'),
+var dbf = require('../'),
     fs = require('fs');
 
 var buf = dbf.structure([
