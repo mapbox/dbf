@@ -2,9 +2,9 @@ var fieldSize = require('./fieldsize'),
     lib = require('./lib'),
     fields = require('./fields');
 
-module.exports = function structure(data) {
+module.exports = function structure(data, meta) {
 
-    var field_meta = fields.multi(data),
+    var field_meta = meta || fields.multi(data),
         fieldDescLength = (32 * field_meta.length) + 1,
         bytesPerRecord = fields.bytesPer(field_meta), // deleted flag
         buffer = new ArrayBuffer(
@@ -13,13 +13,15 @@ module.exports = function structure(data) {
             // header
             32 +
             // contents
-            (bytesPerRecord * data.length)
-        ),
+            (bytesPerRecord * data.length) +
+            // EOF marker
+            1
+    ),
         now = new Date(),
         view = new DataView(buffer);
 
-    // version number
-    view.setUint8(0, 3);
+    // version number - dBase III
+    view.setUint8(0, 0x03);
     // date of last update
     view.setUint8(1, now.getFullYear() - 1900);
     view.setUint8(2, now.getMonth());
@@ -33,7 +35,8 @@ module.exports = function structure(data) {
     // length of each record
     view.setUint16(10, bytesPerRecord, true);
 
-    view.setInt8(fieldDescLength - 1, 13);
+    // Terminator
+    view.setInt8(32 + fieldDescLength - 1, 0x0D);
 
     field_meta.forEach(function(f, i) {
         // field name
@@ -54,7 +57,8 @@ module.exports = function structure(data) {
         view.setUint8(offset, 32);
         offset++;
         field_meta.forEach(function(f) {
-            var val = row[f.name] || 0;
+            var val = row[f.name];
+            if (val === null || typeof val === 'undefined') val = '';
 
             switch (f.type) {
                 // boolean
@@ -63,7 +67,7 @@ module.exports = function structure(data) {
                     offset++;
                     break;
 
-                // decimal
+                // date
                 case 'D':
                     offset = lib.writeField(view, 8,
                         lib.lpad(val.toString(), 8, ' '), offset);
@@ -89,7 +93,7 @@ module.exports = function structure(data) {
     });
 
     // EOF flag
-    view.setUint8(offset - 1, 26);
+    view.setUint8(offset, 0x1A);
 
     return view;
 };
