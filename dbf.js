@@ -1,9 +1,8 @@
-(function(e){if("function"==typeof bootstrap)bootstrap("dbf",e);else if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else if("undefined"!=typeof ses){if(!ses.ok())return;ses.makeDbf=e}else"undefined"!=typeof window?window.dbf=e():global.dbf=e()})(function(){var define,ses,bootstrap,module,exports;
-return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports.structure = require('./src/structure');
+!function(e){if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.dbf=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
+module.exports.structure = _dereq_('./src/structure');
 
-},{"./src/structure":5}],2:[function(require,module,exports){
-var fieldSize = require('./fieldsize');
+},{"./src/structure":5}],2:[function(_dereq_,module,exports){
+var fieldSize = _dereq_('./fieldsize');
 
 var types = {
     string: 'C',
@@ -22,6 +21,11 @@ function multi(features) {
     return obj(fields);
 }
 
+/**
+ * @param {Object} a
+ * @param {Object} b
+ * @returns {Object}
+ */
 function inherit(a, b) {
     for (var i in b) { a[i] = b[i]; }
     return a;
@@ -41,12 +45,16 @@ function obj(_) {
     return o;
 }
 
+/**
+ * @param {Array} fields
+ * @returns {Array}
+ */
 function bytesPer(fields) {
     // deleted flag
     return fields.reduce(function(memo, f) { return memo + f.size; }, 1);
 }
 
-},{"./fieldsize":3}],3:[function(require,module,exports){
+},{"./fieldsize":3}],3:[function(_dereq_,module,exports){
 module.exports = {
     // string
     C: 254,
@@ -64,15 +72,34 @@ module.exports = {
     B: 8,
 };
 
-},{}],4:[function(require,module,exports){
+},{}],4:[function(_dereq_,module,exports){
+/**
+ * @param {string} str
+ * @param {number} len
+ * @param {string} char
+ * @returns {string}
+ */
 module.exports.lpad = function lpad(str, len, char) {
     while (str.length < len) { str = char + str; } return str;
 };
 
+/**
+ * @param {string} str
+ * @param {number} len
+ * @param {string} char
+ * @returns {string}
+ */
 module.exports.rpad = function rpad(str, len, char) {
     while (str.length < len) { str = str + char; } return str;
 };
 
+/**
+ * @param {object} view
+ * @param {number} fieldLength
+ * @param {string} str
+ * @param {number} offset
+ * @returns {number}
+ */
 module.exports.writeField = function writeField(view, fieldLength, str, offset) {
     for (var i = 0; i < fieldLength; i++) {
         view.setUint8(offset, str.charCodeAt(i)); offset++;
@@ -80,14 +107,19 @@ module.exports.writeField = function writeField(view, fieldLength, str, offset) 
     return offset;
 };
 
-},{}],5:[function(require,module,exports){
-var fieldSize = require('./fieldsize'),
-    lib = require('./lib'),
-    fields = require('./fields');
+},{}],5:[function(_dereq_,module,exports){
+var fieldSize = _dereq_('./fieldsize'),
+    lib = _dereq_('./lib'),
+    fields = _dereq_('./fields');
 
-module.exports = function structure(data) {
+/**
+ * @param {Array} data
+ * @param {Array} meta
+ * @returns {Object} view
+ */
+module.exports = function structure(data, meta) {
 
-    var field_meta = fields.multi(data),
+    var field_meta = meta || fields.multi(data),
         fieldDescLength = (32 * field_meta.length) + 1,
         bytesPerRecord = fields.bytesPer(field_meta), // deleted flag
         buffer = new ArrayBuffer(
@@ -96,13 +128,15 @@ module.exports = function structure(data) {
             // header
             32 +
             // contents
-            (bytesPerRecord * data.length)
-        ),
+            (bytesPerRecord * data.length) +
+            // EOF marker
+            1
+    ),
         now = new Date(),
         view = new DataView(buffer);
 
-    // version number
-    view.setUint8(0, 3);
+    // version number - dBase III
+    view.setUint8(0, 0x03);
     // date of last update
     view.setUint8(1, now.getFullYear() - 1900);
     view.setUint8(2, now.getMonth());
@@ -116,7 +150,8 @@ module.exports = function structure(data) {
     // length of each record
     view.setUint16(10, bytesPerRecord, true);
 
-    view.setInt8(fieldDescLength - 1, 13);
+    // Terminator
+    view.setInt8(32 + fieldDescLength - 1, 0x0D);
 
     field_meta.forEach(function(f, i) {
         // field name
@@ -137,7 +172,8 @@ module.exports = function structure(data) {
         view.setUint8(offset, 32);
         offset++;
         field_meta.forEach(function(f) {
-            var val = row[f.name] || 0;
+            var val = row[f.name];
+            if (val === null || typeof val === 'undefined') val = '';
 
             switch (f.type) {
                 // boolean
@@ -146,7 +182,7 @@ module.exports = function structure(data) {
                     offset++;
                     break;
 
-                // decimal
+                // date
                 case 'D':
                     offset = lib.writeField(view, 8,
                         lib.lpad(val.toString(), 8, ' '), offset);
@@ -172,7 +208,7 @@ module.exports = function structure(data) {
     });
 
     // EOF flag
-    view.setUint8(offset - 1, 26);
+    view.setUint8(offset, 0x1A);
 
     return view;
 };
@@ -180,4 +216,3 @@ module.exports = function structure(data) {
 },{"./fields":2,"./fieldsize":3,"./lib":4}]},{},[1])
 (1)
 });
-;

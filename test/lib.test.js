@@ -1,11 +1,8 @@
-var expect = require('expect.js'),
+var test = require('tap').test,
     lib = require('../src/lib');
 
-describe('lib', function() {
-    it('rpad', function() {
-        expect(lib.rpad('test', 10, ' ')).to.eql('test      ');
-    });
-    it('lpad', function() {
-        expect(lib.lpad('test', 10, ' ')).to.eql('      test');
-    });
+test('lib', function(t) {
+    t.equal(lib.rpad('test', 10, ' '), 'test      ', 'rpad');
+    t.equal(lib.lpad('test', 10, ' '), '      test', 'lpad');
+    t.end();
 });

@@ -17,6 +17,11 @@ function multi(features) {
     return obj(fields);
 }
 
+/**
+ * @param {Object} a
+ * @param {Object} b
+ * @returns {Object}
+ */
 function inherit(a, b) {
     for (var i in b) { a[i] = b[i]; }
     return a;
@@ -36,6 +41,10 @@ function obj(_) {
     return o;
 }
 
+/**
+ * @param {Array} fields
+ * @returns {Array}
+ */
 function bytesPer(fields) {
     // deleted flag
     return fields.reduce(function(memo, f) { return memo + f.size; }, 1);

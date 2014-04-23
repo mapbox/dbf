@@ -1,9 +1,8 @@
-var expect = require('expect.js'),
+var test = require('tap').test,
     structure = require('../src/structure');
 
-describe('structure', function() {
-    it('creates a blank record', function() {
-        var dat = structure([{ foo: 'bar' }]);
-        expect(dat).to.be.ok();
-    });
+test('structure', function(t) {
+    var dat = structure([{ foo: 'bar' }]);
+    t.ok(dat);
+    t.end();
 });

@@ -7,16 +7,16 @@
     "jdataview": "~2.4.4"
   },
   "devDependencies": {
-    "expect.js": "~0.2.0",
-    "mocha": "~1.13.0"
+    "tap": "~0.4.8",
+    "browserify": "~3.44.2"
   },
   "scripts": {
-    "test": "mocha -R spec",
+    "test": "tap test/*.js",
     "make": "browserify -s dbf ./ > dbf.js"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/tmcw/dbf"
+    "url": "git://github.com/mapbox/dbf"
   },
   "keywords": [
     "dbf",
@@ -27,6 +27,6 @@
   "author": "Tom MacWright",
   "license": "BSD-2-Clause",
   "bugs": {
-    "url": "https://github.com/tmcw/dbf/issues"
+    "url": "https://github.com/mapbox/dbf/issues"
   }
 }

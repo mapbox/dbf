@@ -2,6 +2,11 @@ var fieldSize = require('./fieldsize'),
     lib = require('./lib'),
     fields = require('./fields');
 
+/**
+ * @param {Array} data
+ * @param {Array} meta
+ * @returns {Object} view
+ */
 module.exports = function structure(data, meta) {
 
     var field_meta = meta || fields.multi(data),
