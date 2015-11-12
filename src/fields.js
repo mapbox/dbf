@@ -32,11 +32,13 @@ function obj(_) {
     for (var p in _) fields[p] = typeof _[p];
     for (var n in fields) {
         var t = types[fields[n]];
-        o.push({
-            name: n,
-            type: t,
-            size: fieldSize[t]
-        });
+        if(t){
+             o.push({
+                name: n,
+                type: t,
+                size: fieldSize[t]
+            });     
+        }
     }
     return o;
 }
