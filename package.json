@@ -1,6 +1,6 @@
 {
   "name": "dbf",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "generate dbf files",
   "main": "index.js",
   "dependencies": {
