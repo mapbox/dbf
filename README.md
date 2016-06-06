@@ -1,5 +1,7 @@
 # dbf
 
+[![Build Status](https://travis-ci.org/mapbox/dbf.svg?branch=master)](https://travis-ci.org/mapbox/dbf)
+
 Write [dBase files](https://en.wikipedia.org/wiki/DBase) in pure JavaScript,
 in node.js or browsers. Requires [ArrayBuffer](https://developer.mozilla.org/en-US/docs/Web/API/ArrayBuffer)
 and [DataView](https://developer.mozilla.org/en-US/docs/Web/API/DataView)
@@ -13,7 +15,9 @@ npm install dbf
 
 Or just in a browser:
 
-    https://raw.github.com/mapbox/dbf/master/dbf.js
+    https://npmcdn.com/dbf@latest/dbf.js
+
+Replace `latest` with the latest version if you want to be sure.
 
 ## example
 
