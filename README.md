@@ -15,7 +15,7 @@ npm install dbf
 
 Or just in a browser:
 
-    https://npmcdn.com/dbf@latest/dbf.js
+    https://unpkg.com/dbf@latest/dbf.js
 
 Replace `latest` with the latest version if you want to be sure.
 
