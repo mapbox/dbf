@@ -45,7 +45,7 @@ module.exports = function structure(data, meta) {
 
     field_meta.forEach(function(f, i) {
         // field name
-        f.name.split('').slice(0, 8).forEach(function(c, x) {
+        f.name.split('').slice(0, 9).forEach(function(c, x) {
             view.setInt8(32 + i * 32 + x, c.charCodeAt(0));
         });
         // field type
@@ -75,20 +75,20 @@ module.exports = function structure(data, meta) {
                 // date
                 case 'D':
                     offset = lib.writeField(view, 8,
-                        lib.lpad(val.toString(), 8, ' '), offset);
+                        Buffer.from(lib.lpad(val.toString(), 8, ' ')), offset);
                     break;
 
                 // number
                 case 'N':
                     offset = lib.writeField(view, f.size,
-                        lib.lpad(val.toString(), f.size, ' ').substr(0, 18),
+                        Buffer.from(lib.lpad(val.toString(), f.size, ' ')),
                         offset);
                     break;
 
                 // string
                 case 'C':
                     offset = lib.writeField(view, f.size,
-                        lib.rpad(val.toString(), f.size, ' '), offset);
+                        lib.rpadbuf(val, f.size, ' '), offset);
                     break;
 
                 default:
