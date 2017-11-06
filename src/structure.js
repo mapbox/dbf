@@ -29,7 +29,7 @@ module.exports = function structure(data, meta) {
     view.setUint8(0, 0x03);
     // date of last update
     view.setUint8(1, now.getFullYear() - 1900);
-    view.setUint8(2, now.getMonth());
+    view.setUint8(2, now.getMonth()+1);
     view.setUint8(3, now.getDate());
     // number of records
     view.setUint32(4, data.length, true);
@@ -75,7 +75,7 @@ module.exports = function structure(data, meta) {
                 // date
                 case 'D':
                     offset = lib.writeField(view, 8,
-                        lib.lpad(val.toString(), 8, ' '), offset);
+                        lib.writeDate(val), offset);
                     break;
 
                 // number

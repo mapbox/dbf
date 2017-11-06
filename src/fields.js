@@ -4,6 +4,7 @@ var types = {
     string: 'C',
     number: 'N',
     boolean: 'L',
+    date: 'D',
     // type to use if all values of a field are null
     null: 'C'
 };
@@ -36,7 +37,7 @@ function inherit(a, b) {
 
 function obj(_) {
     var fields = {}, o = [];
-    for (var p in _) fields[p] = _[p] === null ? 'null' : typeof _[p];
+    for (var p in _) fields[p] = _[p] === null ? 'null' : _[p] instanceof Date ? 'date' : typeof _[p];
     for (var n in fields) {
         var t = types[fields[n]];
         if(t){
