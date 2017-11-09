@@ -2,6 +2,14 @@
 
 [![Build Status](https://travis-ci.org/mapbox/dbf.svg?branch=master)](https://travis-ci.org/mapbox/dbf)
 
+---
+
+## Looking for new maintainers!
+
+This project is currently unmaintained. We'd love to turn it over to a new maintainer. If you're interested, please file an issue!
+
+---
+
 Write [dBase files](https://en.wikipedia.org/wiki/DBase) in pure JavaScript,
 in node.js or browsers. Requires [ArrayBuffer](https://developer.mozilla.org/en-US/docs/Web/API/ArrayBuffer)
 and [DataView](https://developer.mozilla.org/en-US/docs/Web/API/DataView)
