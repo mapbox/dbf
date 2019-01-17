@@ -52,7 +52,7 @@ module.exports = function structure(data, meta) {
         view.setInt8(32 + i * 32 + 11, f.type.charCodeAt(0));
         // field length
         view.setInt8(32 + i * 32 + 16, f.size);
-        if (f.type == 'N') view.setInt8(32 + i * 32 + 17, 3);
+        if (f.type == 'N') view.setInt8(32 + i * 32 + 17, 'precision' in f ? f.precision : 3);
     });
 
     offset = fieldDescLength + 32;
