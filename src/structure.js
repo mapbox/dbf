@@ -8,7 +8,13 @@ var fieldSize = require('./fieldsize'),
  * @returns {Object} view
  */
 module.exports = function structure(data, meta) {
-
+    if(meta){
+        //  
+        meta.forEach(x => {
+            if (x.type == 'D') x.size = 8
+            if (x.type == 'L') x.size = 1
+        });
+    }
     var field_meta = meta || fields.multi(data),
         fieldDescLength = (32 * field_meta.length) + 1,
         bytesPerRecord = fields.bytesPer(field_meta), // deleted flag
@@ -52,7 +58,7 @@ module.exports = function structure(data, meta) {
         view.setInt8(32 + i * 32 + 11, f.type.charCodeAt(0));
         // field length
         view.setInt8(32 + i * 32 + 16, f.size);
-        if (f.type == 'N') view.setInt8(32 + i * 32 + 17, 3);
+        if (f.type == 'N') view.setInt8(32 + i * 32 + 17, f.decs || 0);
     });
 
     offset = fieldDescLength + 32;
