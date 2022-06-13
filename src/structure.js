@@ -74,7 +74,7 @@ module.exports = function structure(data, meta) {
             switch (f.type) {
                 // boolean
                 case 'L':
-                    view.setUint8(offset, val ? 84 : 70);
+                    view.setUint8(offset, val == 't' ? 84 : 70); offset++; //   it only evaluates that val is not empty, it could be if it is true if val=='t', otherwise all false
                     offset++;
                     break;
 
