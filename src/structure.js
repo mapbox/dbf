@@ -44,15 +44,17 @@ module.exports = function structure(data, meta) {
     view.setInt8(32 + fieldDescLength - 1, 0x0D);
 
     field_meta.forEach(function(f, i) {
+        var offset = 32 + i * 32;
         // field name
-        f.name.split('').slice(0, 8).forEach(function(c, x) {
-            view.setInt8(32 + i * 32 + x, c.charCodeAt(0));
+        var buf = lib.toBuffer(f.name).slice(0, 11);
+        buf.forEach(function(b, x) {
+            view.setInt8(offset + x, b);
         });
         // field type
-        view.setInt8(32 + i * 32 + 11, f.type.charCodeAt(0));
+        view.setInt8(offset + 11, f.type.charCodeAt(0));
         // field length
-        view.setInt8(32 + i * 32 + 16, f.size);
-        if (f.type == 'N') view.setInt8(32 + i * 32 + 17, 3);
+        view.setInt8(offset + 16, f.size);
+        if (f.type == 'N') view.setInt8(offset + 17, 3);
     });
 
     offset = fieldDescLength + 32;
