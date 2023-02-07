@@ -45,7 +45,7 @@ module.exports = function structure(data, meta) {
 
     field_meta.forEach(function(f, i) {
         // field name
-        f.name.split('').slice(0, 8).forEach(function(c, x) {
+        f.name.split('').slice(0, 10).forEach(function(c, x) {
             view.setInt8(32 + i * 32 + x, c.charCodeAt(0));
         });
         // field type
