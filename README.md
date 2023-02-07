@@ -4,9 +4,11 @@
 
 ---
 
-## Looking for new maintainers!
+## Looking for extra maintainers!
 
-This project is currently unmaintained. We'd love to turn it over to a new maintainer. If you're interested, please file an issue!
+Mapbox has graciously turned the control of this repo over to [sheindel](https://github.com/sheindel).
+However, this should not be maintained by just one individual, so if others are serious about maintaining, 
+please open a fresh issue.
 
 ---
 
@@ -63,5 +65,4 @@ file structure.
 ## Specifications
 
 * http://www.clicketyclick.dk/databases/xbase/format/dbf.html#DBF_STRUCT
-* http://www.quantdec.com/SYSEN597/GTKAV/section4/chapter_15a.htm
-* http://ulisse.elettra.trieste.it/services/doc/dbase/DBFstruct.htm
+* https://www.oocities.org/geoff_wass/dBASE/GaryWhite/dBASE/FAQ/qformt.htm
