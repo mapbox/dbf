@@ -55,7 +55,7 @@ module.exports = function structure(data, meta) {
         if (f.type == 'N') view.setInt8(32 + i * 32 + 17, 3);
     });
 
-    offset = fieldDescLength + 32;
+    var offset = fieldDescLength + 32;
 
     data.forEach(function(row, num) {
         // delete flag: this is not deleted
