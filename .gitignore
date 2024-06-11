@@ -1,1 +1,4 @@
 dbf.js
+node_modules
+foo.dbf
+package-lock.json
