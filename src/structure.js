@@ -29,7 +29,7 @@ module.exports = function structure(data, meta) {
     view.setUint8(0, 0x03);
     // date of last update
     view.setUint8(1, now.getFullYear() - 1900);
-    view.setUint8(2, now.getMonth()+1);
+    view.setUint8(2, now.getMonth() + 1);
     view.setUint8(3, now.getDate());
     // number of records
     view.setUint32(4, data.length, true);
@@ -45,7 +45,7 @@ module.exports = function structure(data, meta) {
 
     field_meta.forEach(function(f, i) {
         // field name
-        f.name.split('').slice(0, 8).forEach(function(c, x) {
+        f.name.split('').slice(0, 10).forEach(function(c, x) {
             view.setInt8(32 + i * 32 + x, c.charCodeAt(0));
         });
         // field type
@@ -55,7 +55,7 @@ module.exports = function structure(data, meta) {
         if (f.type == 'N') view.setInt8(32 + i * 32 + 17, 3);
     });
 
-    offset = fieldDescLength + 32;
+    var offset = fieldDescLength + 32;
 
     data.forEach(function(row, num) {
         // delete flag: this is not deleted
