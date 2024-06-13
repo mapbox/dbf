@@ -33,6 +33,6 @@ module.exports.writeField = function writeField(view, fieldLength, str, offset) 
 };
 
 module.exports.writeDate = function(date) {
-    if(!date || isNaN(date.getTime())) return "        ";
-    return ("0000"+date.getFullYear()).slice(-4) + ("00"+(date.getMonth()+1)).slice(-2) + ("00"+date.getDate()).slice(-2);
+    if(!date || isNaN(new Date(date).getTime())) return "        ";
+    return ("0000"+new Date(date).getFullYear()).slice(-4) + ("00"+(new Date(date).getMonth()+1)).slice(-2) + ("00"+new Date(date).getDate()).slice(-2);
 };

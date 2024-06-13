@@ -2,8 +2,9 @@ var dbf = require('./'),
     fs = require('fs');
 
 var buf = dbf.structure([
-    {foo:'bar',noo:new Date()},
-    {foo:'louie'}
+    {foo:'bar',noo:10},
+    {foo:'louie'},
+    {baz:new Date()}
 ]);
 
 fs.writeFileSync('foo.dbf', toBuffer(buf.buffer));
