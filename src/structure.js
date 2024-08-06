@@ -75,7 +75,7 @@ module.exports = function structure(data, meta) {
                 // date
                 case 'D':
                     offset = lib.writeField(view, 8,
-                        lib.lpad(val.toString(), 8, ' '), offset);
+                        lib.writeDate(val), offset);
                     break;
 
                 // number
