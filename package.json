@@ -1,6 +1,6 @@
 {
   "name": "dbf",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "generate dbf files",
   "main": "index.js",
   "dependencies": {
@@ -35,5 +35,8 @@
   "license": "BSD-2-Clause",
   "bugs": {
     "url": "https://github.com/mapbox/dbf/issues"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
